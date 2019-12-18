@@ -1,0 +1,27 @@
+{
+  "name": "my-service",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon ./bin/www",
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "connect-history-api-fallback": "^1.6.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "express-jwt": "^5.3.1",
+    "http-errors": "~1.6.2",
+    "jade": "~1.11.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.4.6",
+    "morgan": "~1.9.0",
+    "qiniu": "^7.2.1",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "express-session": "^1.15.6",
+    "nodemon": "^2.0.2"
+  }
+}
