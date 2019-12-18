@@ -13,7 +13,7 @@ module.exports.login = async function (data) {
 
 //新增平台管理
 module.exports.addUsers = async function (data) {
-    
+    const state = await addUsers(data);
     if (state.length !== 0) {
         return true
     } else {

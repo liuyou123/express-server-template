@@ -89,7 +89,8 @@ app.use(expressJWT({
 }).unless({
   // 除了这个地址，其他的URL都需要验证
   path: [
-    '/users/login'
+    '/users/login',
+    '/users/addUsers'
     // /^\/users\/.*/
   ]
 }));

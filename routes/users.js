@@ -28,7 +28,7 @@ router.post('/login', async function (req, res, next) {
   }
 
   setToken(isLogin._id).then(response=>{
-    let token = response
+    let token ='Bearer ' + response
     res.send(interface({success,errorMessage,resultObject:{userInfo:isLogin,token}}));
   })
  
