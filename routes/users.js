@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const jwt = require('jsonwebtoken');
 const {interface,setToken}= require('../untils/common')
+const  CONSTANT  = require('../common/secretKey.js');
 
 
 
@@ -14,6 +15,7 @@ router.get('/', function (req, res, next) {
 
 //平台登陆
 router.post('/login', async function (req, res, next) {
+ 
   const isLogin = await login(req.body)
 
   //将登录的账号保存到服务端储存
@@ -21,21 +23,37 @@ router.post('/login', async function (req, res, next) {
   success = false
 
   if (isLogin) {
-    req.session.users = req.body
+    req.session.users = isLogin[0]
     success=true
   }else{
     errorMessage = '用户名或密码错误'
   }
-
-  setToken(isLogin._id).then(response=>{
-    let token ='Bearer ' + response
-    res.send(interface({success,errorMessage,resultObject:{userInfo:isLogin,token}}));
-  })
- 
   
  
+    res.send(interface({success,errorMessage,resultObject:{userInfo:isLogin}}));
   
+ 
 });
+
+//获取token
+router.get('/getToken', async function (req, res, next) {
+  const users = req.session.users
+  const token =await 'Bearer ' + jwt.sign(
+    {
+      _id: users._id,
+      // admin: user.role === 'admin'
+    },
+    CONSTANT.SECRET_KEY,
+    {
+      expiresIn: 3600 * 24 * 3
+    }
+  )
+
+  let resultObject = token
+ 
+  res.send(interface({resultObject}))
+});
+
 
 //新增平台管理
 router.post('/addUsers', async function (req, res, next) {
@@ -53,7 +71,8 @@ router.post('/isUsers', async function (req, res, next) {
 
 // 分页查询服务
 router.get('/getAllByPage', async function (req, res, next) {
-  res.send(await getAllByPage(req.query))
+  let resultObject = await getAllByPage(req.query)
+  res.send(interface({resultObject}))
 });
 
 //修改用户信息

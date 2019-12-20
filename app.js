@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var expressJWT = require('express-jwt');
+// const jwt = require('jsonwebtoken');
 
 
 //引入一级路由
@@ -39,24 +40,25 @@ var mimeType = {
   'html': 'text/html',
   'css': 'text/css'
 }
-app.all('*', function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', '*');
-  res.header('Access-Control-Allow-Methods', '*');
-  res.header('Content-Type', 'application/json;charset=utf-8');
-  res.header('Content-Type', 'video/mp4');
-  res.header('Content-Type', 'audio/mp3');
-  if (mimeType[req.url.split('.').pop()]) {
-    res.header('Content-Type', mimeType[req.url.split('.').pop()] + ';charset:UTF-8');
-  }
+// app.all('*', function (req, res, next) {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Headers', '*');
+//   res.header('Access-Control-Allow-Methods', '*');
+//   res.header('Content-Type', 'application/json;charset=utf-8');
+//   res.header('Content-Type', 'video/mp4');
+//   res.header('Content-Type', 'audio/mp3');
+//   if (mimeType[req.url.split('.').pop()]) {
+//     res.header('Content-Type', mimeType[req.url.split('.').pop()] + ';charset:UTF-8');
+//   }
  
-  next();
-});
+//   next();
+// });
 
 app.post('*', bodyParser.urlencoded({ extended: true }),
   function (req, res, next) {
     next();
   });
+  app.use(bodyParser.json());
   
 
 
@@ -76,24 +78,39 @@ app.use(session({
 }))
 
 
-const CONSTANT = {
-  SECRET_KEY: 'screttKey'
-};
+
+
+const  CONSTANT  = require('./common/secretKey.js');
+
+// const {verToken} =  require('./untils/common')
 
 
 
-
-// token 设置
+// token 设置   
 app.use(expressJWT({
-  secret: CONSTANT.SECRET_KEY
+  secret: CONSTANT.SECRET_KEY,
+ 
+  // getToken: function(req){
+  //   if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+  //     const token = req.headers.authorization.split(' ')[1];
+  //     if(token == req.session.token){
+  //       return req.headers.authorization.split(' ')[1]
+  //     }
+  //     return null
+  //   } 
+  //   return null
+  // }
+      
 }).unless({
   // 除了这个地址，其他的URL都需要验证
   path: [
     '/users/login',
-    '/users/addUsers'
+    '/users/addUsers',
+    '/users/getToken'
     // /^\/users\/.*/
   ]
 }));
+
 
 
 //一级路由跳转标签
@@ -108,7 +125,7 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-const {interface} = require('./untils/common')
+const { interface } = require('./untils/common')
 // error handler
 app.use(function(err, req, res, next) {
  
@@ -118,8 +135,9 @@ app.use(function(err, req, res, next) {
 
   // 
  // 校验 token 失败时的处理
+ 
  if (err.name === 'UnauthorizedError') {
-  res.status(403).send(interface({errorMessage:'无效token',success:false}));
+  res.status(err.status).send(interface({errorMessage:'无效token',success:false}));
   
 }else{
   //render the error page
