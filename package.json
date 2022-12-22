@@ -14,7 +14,7 @@
     "express-jwt": "^5.3.1",
     "http-errors": "~1.6.2",
     "jade": "~1.11.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^5.4.6",
     "morgan": "~1.9.0",
     "qiniu": "^7.2.1",
